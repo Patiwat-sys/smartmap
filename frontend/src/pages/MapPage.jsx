@@ -71,7 +71,7 @@ function MapPage() {
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
-        <div className="spinner-border text-primary" role="status">
+        <div className="spinner-border text-primary" role="status" style={{ width: '3rem', height: '3rem' }}>
           <span className="visually-hidden">Loading...</span>
         </div>
       </div>
@@ -80,57 +80,93 @@ function MapPage() {
 
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h3 className="fw-bold" style={{ color: '#4682B4' }}>🗺️ Map View</h3>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 className="fw-bold mb-1" style={{ color: '#2E5C8A', fontSize: '1.75rem' }}>
+            🗺️ Map View
+          </h3>
+          <p className="text-muted mb-0" style={{ fontSize: '0.9rem' }}>
+            Click on the map to add a new location pin
+          </p>
+        </div>
         <button
           className="btn btn-primary"
           onClick={() => setShowAddForm(!showAddForm)}
+          style={{ borderRadius: '16px', padding: '12px 24px', fontWeight: '600' }}
         >
-          {showAddForm ? 'Cancel' : '+ Add Location'}
+          {showAddForm ? '✕ Cancel' : '+ Add Location'}
         </button>
       </div>
 
       {showAddForm && (
-        <div className="card mb-3 p-3">
-          <h5>Add New Location</h5>
+        <div 
+          className="card mb-4" 
+          style={{ 
+            borderRadius: '24px',
+            padding: '28px',
+            background: 'linear-gradient(135deg, #F5FAFF 0%, #E3F2FD 100%)'
+          }}
+        >
+          <h5 className="mb-4" style={{ color: '#2E5C8A', fontWeight: '600' }}>
+            Add New Location
+          </h5>
           <form onSubmit={handleAddPin}>
-            <div className="row">
-              <div className="col-md-6 mb-2">
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label">Title</label>
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Title"
+                  placeholder="Enter location title"
                   value={newPin.title}
                   onChange={(e) => setNewPin({ ...newPin, title: e.target.value })}
                   required
+                  style={{ borderRadius: '16px' }}
                 />
               </div>
-              <div className="col-md-6 mb-2">
+              <div className="col-md-6">
+                <label className="form-label">Description</label>
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Description"
+                  placeholder="Enter description"
                   value={newPin.description}
                   onChange={(e) => setNewPin({ ...newPin, description: e.target.value })}
                   required
+                  style={{ borderRadius: '16px' }}
                 />
               </div>
             </div>
-            <div className="mb-2">
-              <small className="text-muted">
-                Click on the map to set location (Lat: {newPin.lat.toFixed(4)}, Lng: {newPin.lng.toFixed(4)})
+            <div className="mt-3 mb-3">
+              <small className="text-muted" style={{ fontSize: '0.85rem' }}>
+                📍 Location: Lat {newPin.lat.toFixed(4)}, Lng {newPin.lng.toFixed(4)}
               </small>
             </div>
-            <button type="submit" className="btn btn-primary">Add Pin</button>
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+              style={{ borderRadius: '16px', padding: '10px 24px', fontWeight: '600' }}
+            >
+              Add Pin
+            </button>
           </form>
         </div>
       )}
 
-      <div className="card" style={{ height: 'calc(100vh - 250px)', minHeight: '400px' }}>
+      <div 
+        className="card" 
+        style={{ 
+          height: 'calc(100vh - 280px)', 
+          minHeight: '500px',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          border: 'none'
+        }}
+      >
         <MapContainer
           center={[13.7563, 100.5018]}
           zoom={6}
-          style={{ height: '100%', width: '100%', borderRadius: '12px', zIndex: 0 }}
+          style={{ height: '100%', width: '100%', zIndex: 0 }}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -140,9 +176,13 @@ function MapPage() {
           {pins.map((pin) => (
             <Marker key={pin.id} position={[pin.latitude, pin.longitude]}>
               <Popup>
-                <div>
-                  <h6>{pin.title}</h6>
-                  <p>{pin.description}</p>
+                <div style={{ padding: '8px' }}>
+                  <h6 style={{ marginBottom: '8px', fontWeight: '600', color: '#2E5C8A' }}>
+                    {pin.title}
+                  </h6>
+                  <p style={{ margin: 0, color: '#6B7280', fontSize: '0.9rem' }}>
+                    {pin.description}
+                  </p>
                 </div>
               </Popup>
             </Marker>

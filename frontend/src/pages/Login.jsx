@@ -41,22 +41,61 @@ function Login({ onLogin }) {
   }
 
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #87CEEB 0%, #4682B4 100%)' }}>
-      <div className="card" style={{ width: '100%', maxWidth: '400px', padding: '2rem' }}>
-        <div className="text-center mb-4">
-          <h2 className="fw-bold" style={{ color: '#4682B4' }}>🗺️ Smart Map</h2>
-          <p className="text-muted">Sign in to your account</p>
+    <div 
+      className="d-flex justify-content-center align-items-center" 
+      style={{ 
+        minHeight: '100vh', 
+        background: 'linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%)',
+        padding: '20px'
+      }}
+    >
+      <div 
+        className="card" 
+        style={{ 
+          width: '100%', 
+          maxWidth: '420px', 
+          padding: '48px 40px',
+          borderRadius: '32px',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        <div className="text-center mb-5">
+          <div 
+            style={{ 
+              fontSize: '3rem', 
+              marginBottom: '16px',
+              filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
+            }}
+          >
+            🗺️
+          </div>
+          <h2 className="fw-bold mb-2" style={{ color: '#2E5C8A', fontSize: '2rem' }}>
+            Smart Map
+          </h2>
+          <p className="text-muted" style={{ fontSize: '0.95rem', margin: 0 }}>
+            Sign in to your account
+          </p>
         </div>
 
         {error && (
-          <div className="alert alert-danger" role="alert">
+          <div 
+            className="alert alert-danger" 
+            role="alert"
+            style={{ 
+              borderRadius: '16px',
+              marginBottom: '24px',
+              fontSize: '0.9rem'
+            }}
+          >
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="username" className="form-label">Username or Email</label>
+          <div className="mb-4">
+            <label htmlFor="username" className="form-label">
+              Username or Email
+            </label>
             <input
               type="text"
               className="form-control"
@@ -65,11 +104,14 @@ function Login({ onLogin }) {
               onChange={(e) => setUsername(e.target.value)}
               required
               placeholder="Enter username or email"
+              style={{ borderRadius: '16px', fontSize: '0.95rem' }}
             />
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">Password</label>
+          <div className="mb-4">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
             <input
               type="password"
               className="form-control"
@@ -78,6 +120,7 @@ function Login({ onLogin }) {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Enter password"
+              style={{ borderRadius: '16px', fontSize: '0.95rem' }}
             />
           </div>
 
@@ -85,6 +128,13 @@ function Login({ onLogin }) {
             type="submit"
             className="btn btn-primary w-100"
             disabled={loading}
+            style={{ 
+              borderRadius: '16px',
+              padding: '14px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              marginTop: '8px'
+            }}
           >
             {loading ? (
               <>
@@ -97,9 +147,9 @@ function Login({ onLogin }) {
           </button>
         </form>
 
-        <div className="mt-4 text-center">
-          <small className="text-muted">
-            Demo accounts: admin/admin123 or user/user123
+        <div className="mt-5 text-center">
+          <small className="text-muted" style={{ fontSize: '0.85rem' }}>
+            Demo accounts: <strong>admin/admin123</strong> or <strong>user/user123</strong>
           </small>
         </div>
       </div>

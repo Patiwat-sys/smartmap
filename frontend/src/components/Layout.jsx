@@ -25,16 +25,18 @@ function Layout({ children, user, onLogout }) {
   }, [])
 
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ background: '#FAFBFC', minHeight: '100vh' }}>
       <Navbar user={user} onLogout={onLogout} onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       <div className="d-flex">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} user={user} />
         <main 
-          className="flex-grow-1 p-3" 
+          className="flex-grow-1" 
           style={{ 
-            marginLeft: isDesktop && sidebarOpen ? '250px' : '0',
-            transition: 'margin-left 0.3s ease',
-            width: '100%'
+            marginLeft: isDesktop && sidebarOpen ? '280px' : '0',
+            transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            width: '100%',
+            padding: '32px',
+            minHeight: 'calc(100vh - 80px)'
           }}
         >
           {children}
