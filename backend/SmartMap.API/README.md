@@ -2,9 +2,14 @@
 
 ASP.NET Core Web API สำหรับ Smart Map Project
 
-## การรันโปรเจค
+## 🗄️ Database Setup
+
+ดูคำแนะนำการติดตั้งฐานข้อมูลใน `Database/README.md`
+
+## 🚀 การรันโปรเจค
 
 ```bash
+cd backend/SmartMap.API
 dotnet restore
 dotnet run
 ```
@@ -13,7 +18,23 @@ API จะรันที่:
 - HTTP: `http://localhost:5000`
 - HTTPS: `https://localhost:7000`
 
-## API Endpoints
+## 📁 Folder Structure สำหรับไฟล์
+
+โปรแกรมจะสร้าง folder structure อัตโนมัติ:
+
+```
+SmartMap.API/
+├── uploads/
+│   ├── maps/
+│   │   └── {Year}/
+│   │       └── {Month}/
+│   ├── verify-seams/
+│   │   └── {VerifySeamId}/
+│   └── geophysic/
+│       └── {HoleName}/
+```
+
+## 🔌 API Endpoints
 
 ### Authentication
 - `POST /api/auth/login` - Login
@@ -25,14 +46,49 @@ API จะรันที่:
 - `PUT /api/users/{id}` - Update user
 - `DELETE /api/users/{id}` - Delete user
 
-### Location Pins
-- `GET /api/locationpins` - Get all location pins
-- `GET /api/locationpins/{id}` - Get location pin by ID
-- `POST /api/locationpins` - Create location pin
-- `PUT /api/locationpins/{id}` - Update location pin
-- `DELETE /api/locationpins/{id}` - Delete location pin
+### Monthly Maps
+- `GET /api/monthlymaps` - Get all maps (optional: ?year={year}&month={month})
+- `GET /api/monthlymaps/{year}/{month}` - Get map by year/month
+- `POST /api/monthlymaps` - Upload map (multipart/form-data)
+- `PUT /api/monthlymaps/{id}` - Update map
+- `DELETE /api/monthlymaps/{id}` - Delete map
 
-## Database
+### Verify Seams
+- `GET /api/verifyseams` - Get all verify seams (optional: ?blockName={name}&status={status})
+- `GET /api/verifyseams/{id}` - Get verify seam details
+- `POST /api/verifyseams` - Create verify seam
+- `PUT /api/verifyseams/{id}` - Update verify seam
+- `DELETE /api/verifyseams/{id}` - Delete verify seam
+- `POST /api/verifyseams/{id}/photos` - Upload photo (multipart/form-data)
+- `DELETE /api/verifyseams/{id}/photos/{photoId}` - Delete photo
+- `POST /api/verifyseams/{id}/verifiers` - Add verifier
 
-Database connection string อยู่ใน `appsettings.json`
-ตอนนี้ใช้ mock data จะเชื่อมต่อ database จริงในภายหลัง
+### Geophysic Holes
+- `GET /api/geophysicholes` - Get all holes (optional: ?holeName={name})
+- `GET /api/geophysicholes/{id}` - Get hole details
+- `POST /api/geophysicholes` - Upload hole data (multipart/form-data, PDF only)
+- `PUT /api/geophysicholes/{id}` - Update hole data
+- `DELETE /api/geophysicholes/{id}` - Delete hole
+
+### Activity Logs
+- `GET /api/activitylogs` - Get all logs (optional: ?userId={id}&actionType={type}&startDate={date}&endDate={date}&page={page}&pageSize={size})
+- `GET /api/activitylogs/user/{userId}` - Get user logs
+- `GET /api/activitylogs/stats` - Get activity statistics
+
+## 🔐 Default Users
+
+หลังจากรัน `CreateTables.sql` จะมี default users:
+
+- **Admin:** username: `admin`, password: `admin123`
+- **User:** username: `user`, password: `user123`
+
+## 📊 Database Schema
+
+ดูรายละเอียดใน `DATABASE_DESIGN.md` ที่ root ของโปรเจค
+
+## 🛠️ Technologies
+
+- ASP.NET Core 10.0
+- Entity Framework Core
+- SQL Server
+- C#
