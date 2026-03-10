@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import ImageEditorModal from '../components/ImageEditorModal'
 
 const API_BASE_URL = 'http://localhost:5000/api'
 
@@ -17,6 +18,8 @@ function VerifySeamPage() {
     notes: '',
     photos: []
   })
+  const [editedPhotos, setEditedPhotos] = useState({}) // Store edited photos: { index: File }
+  const [editingPhotoIndex, setEditingPhotoIndex] = useState(null)
   const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
@@ -60,10 +63,12 @@ function VerifySeamPage() {
 
       const verifySeamId = createResponse.data.verifySeam.id
 
-      // Step 2: Upload photos
+      // Step 2: Upload photos (use edited photos if available)
       const formDataToSend = new FormData()
-      formData.photos.forEach((photo) => {
-        formDataToSend.append('files', photo)
+      formData.photos.forEach((photo, index) => {
+        // Use edited photo if available, otherwise use original
+        const photoToUpload = editedPhotos[index] || photo
+        formDataToSend.append('files', photoToUpload)
       })
       if (formData.notes) {
         formDataToSend.append('description', formData.notes)
@@ -86,6 +91,7 @@ function VerifySeamPage() {
         notes: '',
         photos: []
       })
+      setEditedPhotos({})
       fetchVerifySeams()
     } catch (error) {
       console.error('Error creating verify seam:', error)
@@ -98,6 +104,34 @@ function VerifySeamPage() {
   const handlePhotoChange = (e) => {
     const files = Array.from(e.target.files)
     setFormData({ ...formData, photos: files })
+    // Reset edited photos when new photos are selected
+    setEditedPhotos({})
+  }
+
+  const handleEditPhoto = (index) => {
+    setEditingPhotoIndex(index)
+  }
+
+  const handleSaveEditedPhoto = (editedFile) => {
+    if (editingPhotoIndex !== null) {
+      setEditedPhotos({
+        ...editedPhotos,
+        [editingPhotoIndex]: editedFile
+      })
+    }
+    setEditingPhotoIndex(null)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingPhotoIndex(null)
+  }
+
+  const getPhotoPreview = (photo, index) => {
+    // If photo is edited, show edited version, otherwise show original
+    if (editedPhotos[index]) {
+      return URL.createObjectURL(editedPhotos[index])
+    }
+    return URL.createObjectURL(photo)
   }
 
   const handleViewDetails = async (id) => {
@@ -237,6 +271,59 @@ function VerifySeamPage() {
                 <small className="text-muted">
                   Selected: {formData.photos.length} file(s)
                 </small>
+                
+                {/* Photo Previews */}
+                {formData.photos.length > 0 && (
+                  <div className="mt-3">
+                    <label className="form-label fw-semibold">Photo Previews:</label>
+                    <div className="row g-3">
+                      {formData.photos.map((photo, index) => (
+                        <div key={index} className="col-md-3 col-sm-4 col-6">
+                          <div className="card" style={{ borderRadius: '16px', overflow: 'hidden' }}>
+                            <div style={{ position: 'relative', paddingTop: '75%', background: '#f5f5f5' }}>
+                              <img
+                                src={getPhotoPreview(photo, index)}
+                                alt={`Preview ${index + 1}`}
+                                className="img-fluid"
+                                style={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left: 0,
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover'
+                                }}
+                              />
+                              {editedPhotos[index] && (
+                                <span
+                                  className="badge bg-success"
+                                  style={{
+                                    position: 'absolute',
+                                    top: '8px',
+                                    right: '8px',
+                                    borderRadius: '8px'
+                                  }}
+                                >
+                                  ✏️ Edited
+                                </span>
+                              )}
+                            </div>
+                            <div className="card-body p-2">
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-primary w-100"
+                                onClick={() => handleEditPhoto(index)}
+                                style={{ borderRadius: '12px', padding: '6px', fontSize: '0.85rem' }}
+                              >
+                                ✏️ Edit Image
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="col-12">
                 <label className="form-label fw-semibold">Notes</label>
@@ -406,6 +493,16 @@ function VerifySeamPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Image Editor Modal */}
+      {editingPhotoIndex !== null && formData.photos[editingPhotoIndex] && (
+        <ImageEditorModal
+          isOpen={true}
+          imageFile={editedPhotos[editingPhotoIndex] || formData.photos[editingPhotoIndex]}
+          onClose={handleCancelEdit}
+          onSave={handleSaveEditedPhoto}
+        />
       )}
     </div>
   )

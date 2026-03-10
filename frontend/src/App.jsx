@@ -75,7 +75,7 @@ function App() {
       <Route
         path="/verify-seams"
         element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="Admin">
             <Layout user={user} onLogout={handleLogout}>
               <VerifySeamPage />
             </Layout>

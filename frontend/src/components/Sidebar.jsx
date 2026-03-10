@@ -5,7 +5,7 @@ function Sidebar({ isOpen, onClose, user }) {
 
   const menuItems = [
     { path: '/', icon: '🗺️', label: 'Map', roles: ['User', 'Admin'] },
-    { path: '/verify-seams', icon: '🔍', label: 'Verify Seam', roles: ['User', 'Admin'] },
+    { path: '/verify-seams', icon: '🔍', label: 'Verify Seam', roles: ['Admin'] },
     { path: '/monthly-maps', icon: '📅', label: 'Monthly Maps', roles: ['Admin'] },
     { path: '/geophysic', icon: '📄', label: 'Geophysic', roles: ['Admin'] },
     { path: '/activity-logs', icon: '📊', label: 'Activity Logs', roles: ['Admin'] },
