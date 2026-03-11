@@ -6,7 +6,9 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const [selectedUser, setSelectedUser] = useState(null)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
   const [editForm, setEditForm] = useState({ username: '', email: '', role: 'User', isActive: true })
+  const [addForm, setAddForm] = useState({ username: '', email: '', password: '', confirmPassword: '', role: 'User', fullName: '', isActive: true })
 
   useEffect(() => {
     fetchUsers()
@@ -60,6 +62,49 @@ function AdminDashboard() {
     }
   }
 
+  const handleAdd = () => {
+    setAddForm({ username: '', email: '', password: '', confirmPassword: '', role: 'User', fullName: '', isActive: true })
+    setShowAddModal(true)
+  }
+
+  const handleCreate = async (e) => {
+    e.preventDefault()
+    
+    // Validate password match
+    if (addForm.password !== addForm.confirmPassword) {
+      alert('Passwords do not match')
+      return
+    }
+
+    // Validate password length
+    if (addForm.password.length < 6) {
+      alert('Password must be at least 6 characters')
+      return
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/users', {
+        username: addForm.username,
+        email: addForm.email,
+        password: addForm.password,
+        role: addForm.role,
+        fullName: addForm.fullName || null,
+        isActive: addForm.isActive
+      })
+      
+      setShowAddModal(false)
+      fetchUsers()
+      alert('User created successfully')
+    } catch (error) {
+      console.error('Error creating user:', error)
+      if (error.response?.data?.message) {
+        alert(error.response.data.message)
+      } else {
+        alert('Failed to create user')
+      }
+    }
+  }
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
@@ -72,13 +117,22 @@ function AdminDashboard() {
 
   return (
     <div>
-      <div className="mb-4">
-        <h3 className="fw-bold mb-1" style={{ color: '#2E5C8A', fontSize: '1.75rem' }}>
-          ⚙️ Admin Dashboard
-        </h3>
-        <p className="text-muted mb-0" style={{ fontSize: '0.9rem' }}>
-          Manage users and system settings
-        </p>
+      <div className="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+          <h3 className="fw-bold mb-1" style={{ color: '#2E5C8A', fontSize: '1.75rem' }}>
+            ⚙️ Admin Dashboard
+          </h3>
+          <p className="text-muted mb-0" style={{ fontSize: '0.9rem' }}>
+            Manage users and system settings
+          </p>
+        </div>
+        <button
+          className="btn btn-primary"
+          onClick={handleAdd}
+          style={{ borderRadius: '16px', padding: '10px 24px', fontWeight: '600' }}
+        >
+          + Add New User
+        </button>
       </div>
 
       <div className="card" style={{ borderRadius: '24px', border: 'none' }}>
@@ -257,6 +311,150 @@ function AdminDashboard() {
                     style={{ borderRadius: '16px', padding: '10px 24px', fontWeight: '600' }}
                   >
                     Update
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add User Modal */}
+      {showAddModal && (
+        <div 
+          className="modal show d-block" 
+          style={{ 
+            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+            backdropFilter: 'blur(4px)'
+          }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content" style={{ borderRadius: '24px', border: 'none' }}>
+              <div className="modal-header" style={{ 
+                borderBottom: '1px solid #F3F4F6',
+                padding: '24px',
+                borderRadius: '24px 24px 0 0'
+              }}>
+                <h5 className="modal-title" style={{ fontWeight: '600', color: '#2E5C8A' }}>
+                  Add New User
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowAddModal(false)}
+                  style={{ borderRadius: '8px' }}
+                ></button>
+              </div>
+              <form onSubmit={handleCreate}>
+                <div className="modal-body" style={{ padding: '24px' }}>
+                  <div className="mb-4">
+                    <label className="form-label">Username <span style={{ color: 'red' }}>*</span></label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={addForm.username}
+                      onChange={(e) => setAddForm({ ...addForm, username: e.target.value })}
+                      required
+                      style={{ borderRadius: '16px' }}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="form-label">Email <span style={{ color: 'red' }}>*</span></label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      value={addForm.email}
+                      onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                      required
+                      style={{ borderRadius: '16px' }}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="form-label">Password <span style={{ color: 'red' }}>*</span></label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      value={addForm.password}
+                      onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
+                      required
+                      minLength={6}
+                      style={{ borderRadius: '16px' }}
+                    />
+                    <small className="text-muted">Minimum 6 characters</small>
+                  </div>
+                  <div className="mb-4">
+                    <label className="form-label">Confirm Password <span style={{ color: 'red' }}>*</span></label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      value={addForm.confirmPassword}
+                      onChange={(e) => setAddForm({ ...addForm, confirmPassword: e.target.value })}
+                      required
+                      style={{ borderRadius: '16px' }}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="form-label">Full Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={addForm.fullName}
+                      onChange={(e) => setAddForm({ ...addForm, fullName: e.target.value })}
+                      style={{ borderRadius: '16px' }}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="form-label">Role <span style={{ color: 'red' }}>*</span></label>
+                    <select
+                      className="form-select"
+                      value={addForm.role}
+                      onChange={(e) => setAddForm({ ...addForm, role: e.target.value })}
+                      style={{ borderRadius: '16px' }}
+                    >
+                      <option value="User">User</option>
+                      <option value="Admin">Admin</option>
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <div className="form-check" style={{ paddingLeft: '0' }}>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={addForm.isActive}
+                        onChange={(e) => setAddForm({ ...addForm, isActive: e.target.checked })}
+                        id="addIsActive"
+                        style={{ 
+                          borderRadius: '6px',
+                          width: '20px',
+                          height: '20px',
+                          marginRight: '12px'
+                        }}
+                      />
+                      <label className="form-check-label" htmlFor="addIsActive" style={{ fontWeight: '500' }}>
+                        Active
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div className="modal-footer" style={{ 
+                  borderTop: '1px solid #F3F4F6',
+                  padding: '20px 24px',
+                  borderRadius: '0 0 24px 24px'
+                }}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowAddModal(false)}
+                    style={{ borderRadius: '16px', padding: '10px 24px', fontWeight: '500' }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    className="btn btn-primary"
+                    style={{ borderRadius: '16px', padding: '10px 24px', fontWeight: '600' }}
+                  >
+                    Create User
                   </button>
                 </div>
               </form>
